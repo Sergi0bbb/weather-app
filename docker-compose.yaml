@@ -1,0 +1,62 @@
+services:
+
+  api:
+    build:
+      context: .
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - API_REDIS_HOST=redis
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/usr/src/weather-app/
+    command: [
+      "uvicorn", "src.main:app",
+      "--host", "0.0.0.0",
+      "--port", "8000",
+      "--reload"
+    ]
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  redis:
+    container_name: redis
+    image: redis:7.0-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis-insight:
+    container_name: redis-insight
+    restart: no
+    image: redis/redisinsight:latest
+    depends_on:
+      - redis
+    ports:
+      - "8081:5540" # Map external port 8081 to internal port 5540
+    volumes:
+      - redis-insight:/data
+    networks:
+      - default_network
+
+
+
+volumes:
+  redis-data:
+    name: redis-data
+  redis-insight:
+    name: redis-insight
+
+networks:
+  default_network:
+    name: default_network
