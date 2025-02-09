@@ -14,7 +14,10 @@ async def fetch_weather(city: str):
     params = {"key": weather_config.WEATHER_API_KEY, "q": city}
     try:
         async with httpx.AsyncClient(timeout=10) as client:
-            response = await client.get(weather_config.WEATHER_API_URL, params=params)
+            response = await client.get(
+                weather_config.WEATHER_API_URL,
+                params=params
+            )
         response.raise_for_status()
 
         return WeatherApiModel.model_validate(response.json())
@@ -41,8 +44,3 @@ def transform_weather_response(original_response: list):
             for response in original_response
         }
     )
-
-
-
-
-
