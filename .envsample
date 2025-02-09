@@ -1,0 +1,8 @@
+# API configuration
+WEATHER_API_KEY=your_api_key_here
+WEATHER_API_URL=https://api.weatherapi.com/v1/current.json
+WEATHER_API_SEARCH_URL=http://api.weatherapi.com/v1/search.json
+
+# Redis configuration
+REDIS_HOST=redis
+REDIS_PORT=6379
